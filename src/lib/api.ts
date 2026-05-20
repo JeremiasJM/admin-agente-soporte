@@ -1,14 +1,28 @@
 import axios from 'axios'
-
-const ADMIN_KEY = import.meta.env.VITE_ADMIN_API_KEY as string
+import { useAuth } from './auth'
 
 const api = axios.create({
   baseURL: '/admin',
-  headers: {
-    'Content-Type': 'application/json',
-    'x-admin-key': ADMIN_KEY,
-  },
+  headers: { 'Content-Type': 'application/json' },
 })
+
+api.interceptors.request.use((config) => {
+  const token = useAuth.getState().token
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`
+  }
+  return config
+})
+
+api.interceptors.response.use(
+  (res) => res,
+  (err) => {
+    if (err.response?.status === 401) {
+      useAuth.getState().logout()
+    }
+    return Promise.reject(err)
+  },
+)
 
 // ── Types ──────────────────────────────────────────────────────
 export interface FaqEntry {
@@ -27,6 +41,12 @@ export interface AgentConfig {
   systemPrompt: string
   settings: AgentSettings
   faqs: FaqEntry[]
+}
+
+// ── Auth ──────────────────────────────────────────────────────
+export const login = async (password: string): Promise<string> => {
+  const res = await api.post<{ token: string }>('/login', { password })
+  return res.data.token
 }
 
 // ── Prompt ─────────────────────────────────────────────────────

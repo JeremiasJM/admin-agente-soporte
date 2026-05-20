@@ -1,11 +1,19 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { useAuth } from '@/lib/auth'
 import { AppLayout } from '@/components/layout/AppLayout'
+import { LoginPage } from '@/pages/LoginPage'
 import { DashboardPage } from '@/pages/DashboardPage'
 import { PromptPage } from '@/pages/PromptPage'
 import { FaqsPage } from '@/pages/FaqsPage'
 import { SettingsPage } from '@/pages/SettingsPage'
 
 function App() {
+  const token = useAuth((s) => s.token)
+
+  if (!token) {
+    return <LoginPage />
+  }
+
   return (
     <BrowserRouter>
       <Routes>

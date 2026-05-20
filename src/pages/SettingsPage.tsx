@@ -2,7 +2,6 @@ import useSWR from 'swr'
 import { getSettings, updateSettings, type AgentSettings } from '@/lib/api'
 import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import {
   Card,
@@ -13,16 +12,16 @@ import {
 } from '@/components/ui/card'
 import { Save, CheckCircle2, AlertCircle, Loader2, Info } from 'lucide-react'
 
-const SUGGESTED_MODELS = [
+const AVAILABLE_MODELS = [
   'gpt-4o',
   'gpt-4o-mini',
   'gpt-4-turbo',
   'gpt-3.5-turbo',
-  'openai/gpt-4o',
-  'openai/gpt-4o-mini',
-  'anthropic/claude-3.5-sonnet',
-  'anthropic/claude-3-haiku',
-  'google/gemini-pro-1.5',
+  'o1',
+  'o1-mini',
+  'o3',
+  'o3-mini',
+  'o4-mini',
 ]
 
 export function SettingsPage() {
@@ -81,30 +80,30 @@ export function SettingsPage() {
             <CardHeader>
               <CardTitle>Modelo LLM</CardTitle>
               <CardDescription>
-                Nombre del modelo que se pasa al proveedor (OpenAI directo o via OpenRouter/Cloudflare AI Gateway).
+                Nombre del modelo de OpenAI que usa el agente.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-1.5">
                 <Label htmlFor="llmModel">Modelo</Label>
-                <Input
+                <select
                   id="llmModel"
                   value={form.llmModel}
                   onChange={(e) => handleChange('llmModel', e.target.value)}
-                  placeholder="gpt-4o"
-                  list="model-suggestions"
-                />
-                <datalist id="model-suggestions">
-                  {SUGGESTED_MODELS.map((m) => (
-                    <option key={m} value={m} />
+                  className="flex h-9 w-full rounded-md border border-slate-300 bg-white px-3 py-1 text-sm shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-slate-400"
+                >
+                  {!AVAILABLE_MODELS.includes(form.llmModel) && form.llmModel && (
+                    <option value={form.llmModel}>{form.llmModel}</option>
+                  )}
+                  {AVAILABLE_MODELS.map((m) => (
+                    <option key={m} value={m}>{m}</option>
                   ))}
-                </datalist>
+                </select>
               </div>
               <div className="flex items-start gap-2 rounded-md bg-blue-50 p-3 text-sm text-blue-700">
                 <Info className="h-4 w-4 shrink-0 mt-0.5" />
                 <span>
                   El modelo actual es <strong>{data?.llmModel}</strong>.
-                  Para usar OpenRouter, utilizá el prefijo <code className="text-xs bg-blue-100 px-1 rounded">proveedor/modelo</code> (ej: <code className="text-xs bg-blue-100 px-1 rounded">openai/gpt-4o</code>).
                 </span>
               </div>
             </CardContent>
