@@ -15,7 +15,7 @@ export default defineConfig({
     port: 5174,
     proxy: {
       '/admin': {
-        target: 'http://localhost:3000',
+        target: 'https://soporte-agente.fmtcloud.com.ar',
         changeOrigin: true,
       },
     },
