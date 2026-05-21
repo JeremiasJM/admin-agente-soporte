@@ -1,8 +1,10 @@
 import axios from 'axios'
 import { useAuth } from './auth'
 
+const API_URL = import.meta.env.VITE_API_URL as string
+
 const api = axios.create({
-  baseURL: '/admin',
+  baseURL: `${API_URL}/admin`,
   headers: { 'Content-Type': 'application/json' },
 })
 
